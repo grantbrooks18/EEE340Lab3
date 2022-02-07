@@ -17,7 +17,7 @@ using the errorlog module.
 In order to do this, it is necessary to record all declared variable types in the
 `variables` dictionary.
 
-Group members: TODO: Your names here
+Group members: OCdt MacDonald and Brooks
 
 Version: TODO: Submission date here
 
@@ -95,15 +95,23 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
     def exitNeg(self, ctx: NimbleParser.NegContext):
         """ TODO: Extend to handle boolean negation. """
+
         if ctx.op.text == '-' and ctx.expr().type == PrimitiveType.Int:
             ctx.type = PrimitiveType.Int
-        else:
+        elif ctx.op.text == '-': #if !is used on non ints
+            ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.INVALID_NEGATION,
+                               f"Can't apply {ctx.op.text} to {ctx.expr().type.name}")
+
+        if ctx.op.text == '!' and ctx.expr().type == PrimitiveType.Bool:
+            ctx.type = PrimitiveType.Bool
+        elif ctx.op.text == '!': #if ! is used on non bools
             ctx.type = PrimitiveType.ERROR
             self.error_log.add(ctx, Category.INVALID_NEGATION,
                                f"Can't apply {ctx.op.text} to {ctx.expr().type.name}")
 
     def exitParens(self, ctx: NimbleParser.ParensContext):
-        pass
+        ctx.type = ctx.expr().type
 
     def exitMulDiv(self, ctx: NimbleParser.MulDivContext):
         pass
@@ -112,13 +120,17 @@ class InferTypesAndCheckConstraints(NimbleListener):
         pass
 
     def exitCompare(self, ctx: NimbleParser.CompareContext):
-        pass
+
+        if ctx.expr(0).type == PrimitiveType.Int and ctx.expr(1).type == PrimitiveType.Int:
+            ctx.type = PrimitiveType.Bool
+        else:
+            ctx.type = PrimitiveType.ERROR
 
     def exitVariable(self, ctx: NimbleParser.VariableContext):
         pass
 
     def exitStringLiteral(self, ctx: NimbleParser.StringLiteralContext):
-        pass
+        ctx.type = PrimitiveType.String
 
     def exitBoolLiteral(self, ctx: NimbleParser.BoolLiteralContext):
         ctx.type = PrimitiveType.Bool

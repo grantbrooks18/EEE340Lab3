@@ -29,11 +29,28 @@ VALID_EXPRESSIONS = [
     # '59+a' is fine, '59 + a' won't work.
     ('37', PrimitiveType.Int),
     ('-37', PrimitiveType.Int),
+
     ('true', PrimitiveType.Bool),
     ('false', PrimitiveType.Bool),
+
     ('!false', PrimitiveType.Bool),
     ('true', PrimitiveType.Bool),
     ('!true', PrimitiveType.Bool),
+
+    ('(37)', PrimitiveType.Int),
+    ('(-37)', PrimitiveType.Int),
+    ('(true)', PrimitiveType.Bool),
+    ('(!false)', PrimitiveType.Bool),
+
+    ('"abcdef"', PrimitiveType.String),
+    ('"Hel  l O  !"', PrimitiveType.String),
+    ('"Hel  \\a\\nl"', PrimitiveType.String),
+
+    ('1<2', PrimitiveType.Bool),
+    ('(1==2)', PrimitiveType.Bool),
+    ('(1==-2)', PrimitiveType.Bool),
+
+
 
 
 
@@ -44,6 +61,14 @@ INVALID_EXPRESSIONS = [
     # As for VALID_EXPRESSIONS, there should be NO WHITE SPACE in the expressions.
     ('!37', Category.INVALID_NEGATION),
     ('!!37', Category.INVALID_NEGATION),
+
+    ('-true', Category.INVALID_NEGATION),
+    ('-false', Category.INVALID_NEGATION),
+
+    ('true<3', Category.CONDITION_NOT_BOOL),
+    ('true<!false', Category.CONDITION_NOT_BOOL),
+    ('!true==false', Category.CONDITION_NOT_BOOL),
+
 ]
 
 
