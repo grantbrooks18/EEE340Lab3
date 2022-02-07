@@ -28,7 +28,15 @@ VALID_EXPRESSIONS = [
     # expressions must contain NO WHITE SPACE for the tests to work. E.g.,
     # '59+a' is fine, '59 + a' won't work.
     ('37', PrimitiveType.Int),
-    ('-37', PrimitiveType.Int)
+    ('-37', PrimitiveType.Int),
+    ('true', PrimitiveType.Bool),
+    ('false', PrimitiveType.Bool),
+    ('!false', PrimitiveType.Bool),
+    ('true', PrimitiveType.Bool),
+    ('!true', PrimitiveType.Bool),
+
+
+
 ]
 
 INVALID_EXPRESSIONS = [
