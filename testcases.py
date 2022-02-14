@@ -37,22 +37,26 @@ VALID_EXPRESSIONS = [
     ('true', PrimitiveType.Bool),
     ('!true', PrimitiveType.Bool),
 
-    ('(37)', PrimitiveType.Int),
+    ('(37)', PrimitiveType.Int), #TODO test with variables!
     ('(-37)', PrimitiveType.Int),
     ('(true)', PrimitiveType.Bool),
     ('(!false)', PrimitiveType.Bool),
 
-    ('"abcdef"', PrimitiveType.String),
+    ('"abcdef"', PrimitiveType.String), #TODO test with variables!
     ('"Hel  l O  !"', PrimitiveType.String),
     ('"Hel  \\a\\nl"', PrimitiveType.String),
 
-    ('1<2', PrimitiveType.Bool),
+    ('1<2', PrimitiveType.Bool), #TODO test with variables!
     ('(1==2)', PrimitiveType.Bool),
     ('(1==-2)', PrimitiveType.Bool),
 
+    ('1+2', PrimitiveType.Int), #TODO test with variables!
+    ('(1--2)', PrimitiveType.Int),
+    ('"HELLO"+"WORLD"', PrimitiveType.String),
 
-
-
+    ('1*3', PrimitiveType.Int), #TODO test with variables!
+    ('(1/2*4)', PrimitiveType.Int),
+    ('((1*2)/4*-2)', PrimitiveType.Int),
 
 ]
 
@@ -68,6 +72,23 @@ INVALID_EXPRESSIONS = [
     ('true<3', Category.CONDITION_NOT_BOOL),
     ('true<!false', Category.CONDITION_NOT_BOOL),
     ('!true==false', Category.CONDITION_NOT_BOOL),
+
+    ('"HELLO"-"WORLD"', Category.INVALID_BINARY_OP),
+    ('true+false', Category.INVALID_BINARY_OP),
+    ('true-4', Category.INVALID_BINARY_OP),
+    ('"abc"+false', Category.INVALID_BINARY_OP),
+
+    ('"HELLO"-"WORLD"', Category.INVALID_BINARY_OP),
+    ('true+false', Category.INVALID_BINARY_OP),
+    ('true-4', Category.INVALID_BINARY_OP),
+    ('"abc"+false', Category.INVALID_BINARY_OP),
+
+    ('"HELLO"/"WORLD"', Category.INVALID_BINARY_OP),
+    ('true*false', Category.INVALID_BINARY_OP),
+    ('true*4', Category.INVALID_BINARY_OP),
+    ('"abc"/false', Category.INVALID_BINARY_OP),
+
+
 
 ]
 

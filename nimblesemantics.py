@@ -114,10 +114,25 @@ class InferTypesAndCheckConstraints(NimbleListener):
         ctx.type = ctx.expr().type
 
     def exitMulDiv(self, ctx: NimbleParser.MulDivContext):
-        pass
+        if ctx.expr(0).type == PrimitiveType.Int and ctx.expr(1).type == PrimitiveType.Int:
+            ctx.type = PrimitiveType.Int
+        else:
+            ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.INVALID_BINARY_OP,
+                               f"Can't apply {ctx.op.text} to {ctx.expr(0).type.name} and {ctx.expr(1).type.name}")
 
     def exitAddSub(self, ctx: NimbleParser.AddSubContext):
-        pass
+
+        if ctx.expr(0).type == PrimitiveType.Int and ctx.expr(1).type == PrimitiveType.Int:
+            ctx.type = PrimitiveType.Int
+            return
+        elif ctx.expr(0).type == PrimitiveType.String and ctx.expr(1).type == PrimitiveType.String and ctx.op.text == '+':
+            ctx.type = PrimitiveType.String
+            return
+
+        ctx.type = PrimitiveType.ERROR
+        self.error_log.add(ctx, Category.INVALID_BINARY_OP,
+                           f"Can't apply {ctx.op.text} to {ctx.expr(0).type.name} and {ctx.expr(1).type.name}")
 
     def exitCompare(self, ctx: NimbleParser.CompareContext):
 
@@ -125,6 +140,8 @@ class InferTypesAndCheckConstraints(NimbleListener):
             ctx.type = PrimitiveType.Bool
         else:
             ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.INVALID_BINARY_OP,
+                               f"Can't apply {ctx.op.text} to {ctx.expr(0).type.name} and {ctx.expr(1).type.name}")
 
     def exitVariable(self, ctx: NimbleParser.VariableContext):
         pass
