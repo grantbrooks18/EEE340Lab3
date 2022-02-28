@@ -69,9 +69,9 @@ INVALID_EXPRESSIONS = [
     ('-true', Category.INVALID_NEGATION),
     ('-false', Category.INVALID_NEGATION),
 
-    ('true<3', Category.CONDITION_NOT_BOOL),
-    ('true<!false', Category.CONDITION_NOT_BOOL),
-    ('!true==false', Category.CONDITION_NOT_BOOL),
+    ('true<3', Category.INVALID_BINARY_OP),
+    ('true<!false', Category.INVALID_BINARY_OP),
+    ('!true==false', Category.INVALID_BINARY_OP),
 
     ('"HELLO"-"WORLD"', Category.INVALID_BINARY_OP),
     ('true+false', Category.INVALID_BINARY_OP),
@@ -144,9 +144,7 @@ class TypeTests(unittest.TestCase):
                 self.assertEqual(PrimitiveType.ERROR, inferred_types[1][expression])
                 self.assertTrue(log.includes_exactly(expected_category, 1, expression))
 
-
     def test_variable_Correct(self):
-
 
         """
         This was stolen from the above examples to rapidly loop through variables and see if they match their types.
@@ -164,7 +162,6 @@ class TypeTests(unittest.TestCase):
 
             pretty_types(inferred_types)
 
-
     def test_print_primitive(self):
         log, variables, inferred_types = do_semantic_analysis("print 123", 'main')
         self.assertEqual(0, log.total_entries())
@@ -174,7 +171,6 @@ class TypeTests(unittest.TestCase):
 
         log, variables, inferred_types = do_semantic_analysis("print true", 'main')
         self.assertEqual(0, log.total_entries())
-
 
     def test_if_while_primitive(self):
         log, variables, inferred_types = do_semantic_analysis("if true { }", 'main')
