@@ -174,7 +174,6 @@ class TypeTests(unittest.TestCase):
             #     print_debug_info(expression, inferred_types, log)
             with self.subTest(expression=expression, expected_type=expected_type):
                 self.assertEqual(expected_type, variables[no_ws])
-                self.assertEqual(0, log.total_entries())
 
             pretty_types(inferred_types)
 

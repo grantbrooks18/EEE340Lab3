@@ -77,6 +77,10 @@ class InferTypesAndCheckConstraints(NimbleListener):
                     ctx.type = PrimitiveType.Int
                 else:
                     ctx.type = PrimitiveType.ERROR
+                    self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                                       f"{ctx.ID()} is declared type {vartype}\n\t"
+                                       f"you tried to assigning a {ctx.expr().type} to it\n\t"
+                                       f"This is an illegal operation. Straight to jail")
 
             else:
                 ctx.type = PrimitiveType.Int
@@ -88,6 +92,11 @@ class InferTypesAndCheckConstraints(NimbleListener):
                     ctx.type = PrimitiveType.Bool
                 else:
                     ctx.type = PrimitiveType.ERROR
+                    self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                                       f"{ctx.ID()} is declared type {vartype}\n\t"
+                                       f"you tried to assigning a {ctx.expr().type} to it\n\t"
+                                       f"This is an illegal operation. Straight to jail")
+
 
             else:
                 ctx.type = PrimitiveType.Bool
@@ -99,12 +108,14 @@ class InferTypesAndCheckConstraints(NimbleListener):
                     ctx.type = PrimitiveType.String
                 else:
                     ctx.type = PrimitiveType.ERROR
+                    self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                                       f"{ctx.ID()} is declared type {vartype}\n\t"
+                                       f"you tried to assigning a {ctx.expr().type} to it\n\t"
+                                       f"This is an illegal operation. Straight to jail")
+
 
             else:
                 ctx.type = PrimitiveType.String
-
-        else:
-            ctx.type = PrimitiveType.ERROR
 
         newkey = str(ctx.ID())
 
