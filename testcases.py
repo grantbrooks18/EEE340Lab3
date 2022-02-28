@@ -92,9 +92,23 @@ INVALID_EXPRESSIONS = [
 
 VARIABLE_TESTS = [
 
-    ("var count : Int", PrimitiveType.Int, "count"),
-    ("var count : Int = 1 ", PrimitiveType.Int, "count"),
-    ("var count : Int = true ", PrimitiveType.ERROR, "count"),
+    ("var Apple : Int", PrimitiveType.Int, "Apple"),
+    ("var Apple : Int = 1 ", PrimitiveType.Int, "Apple"),
+    ("var Apple : Int = true ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Int = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
+
+
+    ("var Apple : Bool = true ", PrimitiveType.Bool, "Apple"),
+    ("var Apple : Bool = false ", PrimitiveType.Bool, "Apple"),
+    ("var Apple : Bool = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Bool = 654 ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Bool", PrimitiveType.Bool, "Apple"),
+
+
+    ("var Apple : String = 654 ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : String = \"Hello\" ", PrimitiveType.String, "Apple"),
+    ("var Apple : String = true ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : String", PrimitiveType.String, "Apple"),
 
 
 ]
@@ -158,7 +172,6 @@ class TypeTests(unittest.TestCase):
             #     print_debug_info(expression, inferred_types, log)
             with self.subTest(expression=expression, expected_type=expected_type):
                 self.assertEqual(expected_type, variables[no_ws])
-                self.assertEqual(0, log.total_entries())
 
             pretty_types(inferred_types)
 

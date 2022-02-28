@@ -72,34 +72,56 @@ class InferTypesAndCheckConstraints(NimbleListener):
         vartype = vartype.text
 
         if vartype == "Int":
-
-
             if ctx.expr():
                 if ctx.expr().type == PrimitiveType.Int:
                     ctx.type = PrimitiveType.Int
                 else:
                     ctx.type = PrimitiveType.ERROR
+                    self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                                       f"{ctx.ID()} is declared type {vartype}\n\t"
+                                       f"you tried to assigning a {ctx.expr().type} to it\n\t"
+                                       f"This is an illegal operation. Straight to jail")
 
             else:
                 ctx.type = PrimitiveType.Int
 
         elif vartype == "Bool":
-            # todo Test if the data is an bool
-            ctx.type = PrimitiveType.Bool
+
+            if ctx.expr():
+                if ctx.expr().type == PrimitiveType.Bool:
+                    ctx.type = PrimitiveType.Bool
+                else:
+                    ctx.type = PrimitiveType.ERROR
+                    self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                                       f"{ctx.ID()} is declared type {vartype}\n\t"
+                                       f"you tried to assigning a {ctx.expr().type} to it\n\t"
+                                       f"This is an illegal operation. Straight to jail")
+
+
+            else:
+                ctx.type = PrimitiveType.Bool
+
 
         elif vartype == "String":
-            # todo Test if the data is an string
+            if ctx.expr():
+                if ctx.expr().type == PrimitiveType.String:
+                    ctx.type = PrimitiveType.String
+                else:
+                    ctx.type = PrimitiveType.ERROR
+                    self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                                       f"{ctx.ID()} is declared type {vartype}\n\t"
+                                       f"you tried to assigning a {ctx.expr().type} to it\n\t"
+                                       f"This is an illegal operation. Straight to jail")
 
-            ctx.type = PrimitiveType.String
 
-        else:
-            ctx.type = PrimitiveType.ERROR
+            else:
+                ctx.type = PrimitiveType.String
 
         newkey = str(ctx.ID())
 
         self.variables[newkey] = ctx.type
 
-        print(self.variables)
+        # print(self.variables)
 
     # --------------------------------------------------------
     # Statements
