@@ -3,7 +3,6 @@ The nimblesemantics module contains the logic required to perform a semantic
 analysis of any syntactically-correct Nimble program, not including function
 definitions and function calls.
 
-TODO: Implement to make this true.
 
 The analysis has two major tasks:
 
@@ -112,8 +111,6 @@ class InferTypesAndCheckConstraints(NimbleListener):
                                        f"{ctx.ID()} is declared type {vartype}\n\t"
                                        f"you tried to assigning a {ctx.expr().type} to it\n\t"
                                        f"This is an illegal operation. Straight to jail")
-
-
             else:
                 ctx.type = PrimitiveType.String
 
@@ -133,6 +130,7 @@ class InferTypesAndCheckConstraints(NimbleListener):
         if vartype == PrimitiveType.Int:
             if ctx.expr().type == PrimitiveType.Int:
                 ctx.type = PrimitiveType.Int
+                ctx.valid = True
             else:
                 ctx.type = PrimitiveType.ERROR
                 self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
@@ -145,8 +143,10 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
             if ctx.expr().type == PrimitiveType.Bool:
                 ctx.type = PrimitiveType.Bool
+                ctx.valid = True
             else:
                 ctx.type = PrimitiveType.ERROR
+                ctx.valid = False
                 self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
                                    f"{ctx.ID()} is declared type {vartype}\n\t"
                                    f"you tried to assigning a {ctx.expr().type} to it\n\t"
@@ -154,8 +154,10 @@ class InferTypesAndCheckConstraints(NimbleListener):
         elif vartype == PrimitiveType.String:
             if ctx.expr().type == PrimitiveType.String:
                 ctx.type = PrimitiveType.String
+                ctx.valid = True
             else:
                 ctx.type = PrimitiveType.ERROR
+                ctx.valid = False
                 self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
                                    f"{ctx.ID()} is declared type {vartype}\n\t"
                                    f"you tried to assigning a {ctx.expr().type} to it\n\t"
@@ -163,11 +165,11 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
         else:
             ctx.type = PrimitiveType.ERROR
+            ctx.valid = False
             self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
                                f"{ctx.ID()} has previously been missassigned\n\t")
 
         newkey = str(ctx.ID())
-
         self.variables[newkey] = ctx.type
 
     def exitWhile(self, ctx: NimbleParser.WhileContext):
@@ -250,7 +252,13 @@ class InferTypesAndCheckConstraints(NimbleListener):
                                f"Can't apply {ctx.op.text} to {ctx.expr(0).type.name} and {ctx.expr(1).type.name}")
 
     def exitVariable(self, ctx: NimbleParser.VariableContext):
-        ctx.type = self.variables[str(ctx.ID())]
+        if str(ctx.ID()) in self.variables:
+            ctx.type = self.variables[str(ctx.ID())]
+
+        else:
+            self.error_log.add(ctx,Category.UNDEFINED_NAME,
+                               f"This {str(ctx.ID())} has not been defined")
+
 
     def exitStringLiteral(self, ctx: NimbleParser.StringLiteralContext):
         ctx.type = PrimitiveType.String
