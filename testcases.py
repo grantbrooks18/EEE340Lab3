@@ -20,7 +20,7 @@ import unittest
 
 from errorlog import Category
 from symboltable import PrimitiveType
-from testhelpers import do_semantic_analysis, pretty_types
+from testhelpers import do_semantic_analysis, pretty_types, do_semantic_analysis_initial_condition
 
 VALID_EXPRESSIONS = [
     # Each entry is a pair: (expression source, expected type)
@@ -112,9 +112,25 @@ VARDEC_TESTS = [
 ]
 
 VARASSIGN_TESTS_valid = [
-    ("var Apple : Int\n Apple = 1", PrimitiveType.Int, "Apple"),
-    ("var Pear : Bool\n Pear = True", PrimitiveType.Bool, "Pear"),
-    ("var nectarine : String\n nectarine = \"The Best Fruit\"", PrimitiveType.String, "nectarine"),
+    ("Apple = 1", PrimitiveType.Int, "Apple",{"Apple" : PrimitiveType.Int} ),
+    ("Pear = true", PrimitiveType.Bool,"Pear", {"Pear" : PrimitiveType.Bool}),
+    ("nectarine = \"The Best Fruit\"", PrimitiveType.String,"nectarine", {"nectarine": PrimitiveType.String }),
+]
+
+VARASSIGN_TESTS_invalid = [
+    ("var Apple : Int\n Apple = true", PrimitiveType.ERROR,  "Apple",{"Apple" : PrimitiveType.Int}),
+    ("var Apple : Int\n Apple = \"Hello\"", PrimitiveType.ERROR,  "Apple",{"Apple" : PrimitiveType.Int}),
+    ("var Apple : Int\n Apple = 1", PrimitiveType.ERROR,  "Apple",{"Apple" : PrimitiveType.ERROR}),
+
+    ("var Pear : Bool\n Pear = 5", PrimitiveType.ERROR, "Pear",{"Pear" : PrimitiveType.Bool}),
+    ("var Pear : Bool\n Pear = \"Hello\"", PrimitiveType.ERROR, "Pear",{"Pear" : PrimitiveType.Bool}),
+    ("var Pear : Bool\n Pear = True", PrimitiveType.ERROR, "Pear",{"Pear" : PrimitiveType.ERROR}),
+
+    ("var nectarine : String\n nectarine = 5", PrimitiveType.ERROR, "nectarine", {"nectarine": PrimitiveType.String }),
+    ("var nectarine : String\n nectarine = true", PrimitiveType.ERROR, "nectarine", {"nectarine": PrimitiveType.String }),
+    ("var nectarine : String\n nectarine = \"Hello\"", PrimitiveType.ERROR, "nectarine", {"nectarine": PrimitiveType.String }),
+
+
 ]
 
 
@@ -187,13 +203,20 @@ class TypeTests(unittest.TestCase):
         variable in the variable dictionary
         """
 
-        for expression, expected_type, ID in VARASSIGN_TESTS_valid:
-            log, variables, inferred_types = do_semantic_analysis(expression, 'varDec')
-            # if expression == '-37':
-            #     print_debug_info(expression, inferred_types, log)
+        for expression, expected_type, ID, setup in VARASSIGN_TESTS_valid:
+            print(f"Testing {expression} ")
+            log, variables, inferred_types = do_semantic_analysis_initial_condition(expression, 'statement',setup)
             with self.subTest(expression=expression, expected_type=expected_type):
                 self.assertEqual(expected_type, variables[ID])
                 self.assertEqual(0, log.total_entries())
+
+        # for expression, expected_type, ID in VARASSIGN_TESTS_invalid:
+        #     log, variables, inferred_types = do_semantic_analysis(expression, 'statement')
+        #     # if expression == '-37':
+        #     #     print_debug_info(expression, inferred_types, log)
+        #     with self.subTest(expression=expression, expected_type=expected_type):
+        #         self.assertEqual(expected_type, variables[ID])
+        #         self.assertEqual(1, log.total_entries())
 
     def test_print_primitive(self):
         log, variables, inferred_types = do_semantic_analysis("print 123", 'main')

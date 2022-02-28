@@ -34,6 +34,26 @@ def do_semantic_analysis(source, start_rule_name):
     return errors, variables, type_collector.inferred_types
 
 
+def do_semantic_analysis_initial_condition(source, start_rule_name,initial_var):
+    """
+    Runs semantic analysis on the source, then runs the expression
+    type collector to collect the inferred types of all expressions
+    on the parse tree.
+
+    This added a method for having initial variables in the dictionary
+    to simulate a variable already being declared.
+    """
+    tree = parse(source, start_rule_name, NimbleLexer, NimbleParser)
+    errors = ErrorLog()
+    variables = initial_var
+    walker = ParseTreeWalker()
+    analyzer = InferTypesAndCheckConstraints(errors, variables)
+    walker.walk(analyzer, tree)
+    type_collector = ExpressionTypeCollector()
+    walker.walk(type_collector, tree)
+    return errors, variables, type_collector.inferred_types
+
+
 class ExpressionTypeCollector(NimbleListener):
     """
     Collects the inferred types of all expressions in a script in an indexed form,
