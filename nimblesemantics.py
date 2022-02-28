@@ -109,13 +109,26 @@ class InferTypesAndCheckConstraints(NimbleListener):
         pass
 
     def exitWhile(self, ctx: NimbleParser.WhileContext):
-        pass
+        if ctx.expr().type != PrimitiveType.Bool:
+            ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.CONDITION_NOT_BOOL,
+                               f"Expression {ctx.expr().text} not boolean")
+            return
 
     def exitIf(self, ctx: NimbleParser.IfContext):
-        pass
+
+        if ctx.expr().type != PrimitiveType.Bool:
+            ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.CONDITION_NOT_BOOL,
+                               f"Expression {ctx.expr().text} not boolean")
+            return
 
     def exitPrint(self, ctx: NimbleParser.PrintContext):
-        pass
+
+        if ctx.expr().type == PrimitiveType.ERROR:
+            ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.UNPRINTABLE_EXPRESSION,
+                               f"Can't print {ctx.op.text} ")
 
     # --------------------------------------------------------
     # Expressions
@@ -125,7 +138,6 @@ class InferTypesAndCheckConstraints(NimbleListener):
         ctx.type = PrimitiveType.Int
 
     def exitNeg(self, ctx: NimbleParser.NegContext):
-        """ TODO: Extend to handle boolean negation. """
 
         if ctx.op.text == '-' and ctx.expr().type == PrimitiveType.Int:
             ctx.type = PrimitiveType.Int
