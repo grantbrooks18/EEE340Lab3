@@ -8,11 +8,10 @@ analysis of valid and invalid expressions.
 **You will need to provide your own testing mechanisms for statements and
 higher-level constructs as appropriate.**
 
-TODO: Complete test cases for Nimble semantic analysis, less function definitions and calls
 
-Group members: TODO: Your names here
+Group members: Grant Brooks, Connor MacDonald
 
-Version: TODO: Submission date here
+Version: 28/02/2022
 Instructor's version: 2022-02-04
 """
 
