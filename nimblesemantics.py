@@ -45,6 +45,8 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
     # --------------------------------------------------------
     # Program structure
+    # Deliberately left blank because the examples shown in class did not
+    # have any tests in these areas, as there is no type to assign.
     # --------------------------------------------------------
 
     def exitScript(self, ctx: NimbleParser.ScriptContext):
