@@ -29,9 +29,6 @@ class Category(Enum):
     def __str__(self):
         return self.name
 
-
-
-
 @dataclass
 class Entry:
     """
