@@ -136,3 +136,24 @@ class TypeTests(unittest.TestCase):
                               expected_category=expected_category):
                 self.assertEqual(PrimitiveType.ERROR, inferred_types[1][expression])
                 self.assertTrue(log.includes_exactly(expected_category, 1, expression))
+
+    def test_print_primitive(self):
+        log, variables, inferred_types = do_semantic_analysis("print 123", 'main')
+        self.assertEqual(0, log.total_entries())
+
+        log, variables, inferred_types = do_semantic_analysis('print "hello"', 'main')
+        self.assertEqual(0, log.total_entries())
+
+        log, variables, inferred_types = do_semantic_analysis("print true", 'main')
+        self.assertEqual(0, log.total_entries())
+
+
+    def test_if_while_primitive(self):
+        log, variables, inferred_types = do_semantic_analysis("if true { }", 'main')
+        self.assertEqual(0, log.total_entries())
+
+        log, variables, inferred_types = do_semantic_analysis('if true { } else { }', 'main')
+        self.assertEqual(0, log.total_entries())
+
+        log, variables, inferred_types = do_semantic_analysis("while true { }", 'main')
+        self.assertEqual(0, log.total_entries())
