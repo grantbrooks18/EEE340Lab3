@@ -163,6 +163,9 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
         else:
             ctx.type = PrimitiveType.ERROR
+            self.error_log.add(ctx, Category.ASSIGN_TO_WRONG_TYPE,
+                               f"{ctx.ID()} has previously been missassigned\n\t")
+
         newkey = str(ctx.ID())
 
         self.variables[newkey] = ctx.type
