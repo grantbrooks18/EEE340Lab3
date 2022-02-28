@@ -96,10 +96,19 @@ VARIABLE_TESTS = [
     ("var Apple : Int = 1 ", PrimitiveType.Int, "Apple"),
     ("var Apple : Int = true ", PrimitiveType.ERROR, "Apple"),
     ("var Apple : Int = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
+
+
     ("var Apple : Bool = true ", PrimitiveType.Bool, "Apple"),
     ("var Apple : Bool = false ", PrimitiveType.Bool, "Apple"),
     ("var Apple : Bool = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
     ("var Apple : Bool = 654 ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Bool", PrimitiveType.Bool, "Apple"),
+
+
+    ("var Apple : String = 654 ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : String = \"Hello\" ", PrimitiveType.String, "Apple"),
+    ("var Apple : String = true ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : String", PrimitiveType.String, "Apple"),
 
 
 ]

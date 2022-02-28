@@ -94,9 +94,14 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
 
         elif vartype == "String":
-            # todo Test if the data is an string
+            if ctx.expr():
+                if ctx.expr().type == PrimitiveType.String:
+                    ctx.type = PrimitiveType.String
+                else:
+                    ctx.type = PrimitiveType.ERROR
 
-            ctx.type = PrimitiveType.String
+            else:
+                ctx.type = PrimitiveType.String
 
         else:
             ctx.type = PrimitiveType.ERROR
