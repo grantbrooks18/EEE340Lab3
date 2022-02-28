@@ -88,6 +88,13 @@ INVALID_EXPRESSIONS = [
     ('true*4', Category.INVALID_BINARY_OP),
     ('"abc"/false', Category.INVALID_BINARY_OP),
 
+]
+
+VARIABLE_TESTS = [
+
+    ("var count : Int", PrimitiveType.Int, "count"),
+    ("var count : Int = 1 ", PrimitiveType.Int, "count"),
+    ("var count : Int = true ", PrimitiveType.ERROR, "count"),
 
 
 ]
@@ -136,3 +143,24 @@ class TypeTests(unittest.TestCase):
                               expected_category=expected_category):
                 self.assertEqual(PrimitiveType.ERROR, inferred_types[1][expression])
                 self.assertTrue(log.includes_exactly(expected_category, 1, expression))
+
+
+    def test_variable_Correct(self):
+
+
+        """
+        This was stolen from the above examples to rapidly loop through variables and see if they match their types.
+
+        no_ws stands for no whitespace
+        """
+
+        for expression, expected_type, no_ws in VARIABLE_TESTS:
+            log, variables, inferred_types = do_semantic_analysis(expression, 'varDec')
+            # if expression == '-37':
+            #     print_debug_info(expression, inferred_types, log)
+            with self.subTest(expression=expression, expected_type=expected_type):
+                self.assertEqual(expected_type, variables[no_ws])
+                self.assertEqual(0, log.total_entries())
+
+            pretty_types(inferred_types)
+

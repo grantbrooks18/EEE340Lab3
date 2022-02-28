@@ -68,7 +68,38 @@ class InferTypesAndCheckConstraints(NimbleListener):
     # --------------------------------------------------------
 
     def exitVarDec(self, ctx: NimbleParser.VarDecContext):
-        pass
+        vartype = ctx.TYPE().getSymbol()
+        vartype = vartype.text
+
+        if vartype == "Int":
+
+
+            if ctx.expr():
+                if ctx.expr().type == PrimitiveType.Int:
+                    ctx.type = PrimitiveType.Int
+                else:
+                    ctx.type = PrimitiveType.ERROR
+
+            else:
+                ctx.type = PrimitiveType.Int
+
+        elif vartype == "Bool":
+            # todo Test if the data is an bool
+            ctx.type = PrimitiveType.Bool
+
+        elif vartype == "String":
+            # todo Test if the data is an string
+
+            ctx.type = PrimitiveType.String
+
+        else:
+            ctx.type = PrimitiveType.ERROR
+
+        newkey = str(ctx.ID())
+
+        self.variables[newkey] = ctx.type
+
+        print(self.variables)
 
     # --------------------------------------------------------
     # Statements
@@ -98,14 +129,14 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
         if ctx.op.text == '-' and ctx.expr().type == PrimitiveType.Int:
             ctx.type = PrimitiveType.Int
-        elif ctx.op.text == '-': #if !is used on non ints
+        elif ctx.op.text == '-':  # if !is used on non ints
             ctx.type = PrimitiveType.ERROR
             self.error_log.add(ctx, Category.INVALID_NEGATION,
                                f"Can't apply {ctx.op.text} to {ctx.expr().type.name}")
 
         if ctx.op.text == '!' and ctx.expr().type == PrimitiveType.Bool:
             ctx.type = PrimitiveType.Bool
-        elif ctx.op.text == '!': #if ! is used on non bools
+        elif ctx.op.text == '!':  # if ! is used on non bools
             ctx.type = PrimitiveType.ERROR
             self.error_log.add(ctx, Category.INVALID_NEGATION,
                                f"Can't apply {ctx.op.text} to {ctx.expr().type.name}")
@@ -126,7 +157,8 @@ class InferTypesAndCheckConstraints(NimbleListener):
         if ctx.expr(0).type == PrimitiveType.Int and ctx.expr(1).type == PrimitiveType.Int:
             ctx.type = PrimitiveType.Int
             return
-        elif ctx.expr(0).type == PrimitiveType.String and ctx.expr(1).type == PrimitiveType.String and ctx.op.text == '+':
+        elif ctx.expr(0).type == PrimitiveType.String and ctx.expr(
+                1).type == PrimitiveType.String and ctx.op.text == '+':
             ctx.type = PrimitiveType.String
             return
 
