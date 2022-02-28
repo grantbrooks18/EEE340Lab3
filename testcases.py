@@ -37,24 +37,24 @@ VALID_EXPRESSIONS = [
     ('true', PrimitiveType.Bool),
     ('!true', PrimitiveType.Bool),
 
-    ('(37)', PrimitiveType.Int), #TODO test with variables!
+    ('(37)', PrimitiveType.Int),
     ('(-37)', PrimitiveType.Int),
     ('(true)', PrimitiveType.Bool),
     ('(!false)', PrimitiveType.Bool),
 
-    ('"abcdef"', PrimitiveType.String), #TODO test with variables!
+    ('"abcdef"', PrimitiveType.String),
     ('"Hel  l O  !"', PrimitiveType.String),
     ('"Hel  \\a\\nl"', PrimitiveType.String),
 
-    ('1<2', PrimitiveType.Bool), #TODO test with variables!
+    ('1<2', PrimitiveType.Bool),
     ('(1==2)', PrimitiveType.Bool),
     ('(1==-2)', PrimitiveType.Bool),
 
-    ('1+2', PrimitiveType.Int), #TODO test with variables!
+    ('1+2', PrimitiveType.Int),
     ('(1--2)', PrimitiveType.Int),
     ('"HELLO"+"WORLD"', PrimitiveType.String),
 
-    ('1*3', PrimitiveType.Int), #TODO test with variables!
+    ('1*3', PrimitiveType.Int),
     ('(1/2*4)', PrimitiveType.Int),
     ('((1*2)/4*-2)', PrimitiveType.Int),
 
@@ -90,7 +90,7 @@ INVALID_EXPRESSIONS = [
 
 ]
 
-VARIABLE_TESTS = [
+VARDEC_TESTS = [
 
     ("var Apple : Int", PrimitiveType.Int, "Apple"),
     ("var Apple : Int = 1 ", PrimitiveType.Int, "Apple"),
@@ -98,19 +98,23 @@ VARIABLE_TESTS = [
     ("var Apple : Int = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
 
 
-    ("var Apple : Bool = true ", PrimitiveType.Bool, "Apple"),
-    ("var Apple : Bool = false ", PrimitiveType.Bool, "Apple"),
-    ("var Apple : Bool = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
-    ("var Apple : Bool = 654 ", PrimitiveType.ERROR, "Apple"),
-    ("var Apple : Bool", PrimitiveType.Bool, "Apple"),
+    ("var Pear : Bool = true ", PrimitiveType.Bool, "Pear"),
+    ("var Pear : Bool = false ", PrimitiveType.Bool, "Pear"),
+    ("var Pear : Bool = \"Hello\" ", PrimitiveType.ERROR, "Pear"),
+    ("var Pear : Bool = 654 ", PrimitiveType.ERROR, "Pear"),
+    ("var Pear : Bool", PrimitiveType.Bool, "Pear"),
 
 
-    ("var Apple : String = 654 ", PrimitiveType.ERROR, "Apple"),
-    ("var Apple : String = \"Hello\" ", PrimitiveType.String, "Apple"),
-    ("var Apple : String = true ", PrimitiveType.ERROR, "Apple"),
-    ("var Apple : String", PrimitiveType.String, "Apple"),
+    ("var nectarine : String = 654 ", PrimitiveType.ERROR, "nectarine"),
+    ("var nectarine : String = \"Hello\" ", PrimitiveType.String, "nectarine"),
+    ("var nectarine : String = true ", PrimitiveType.ERROR, "nectarine"),
+    ("var nectarine : String", PrimitiveType.String, "nectarine"),
+]
 
-
+VARASSIGN_TESTS_valid = [
+    ("var Apple : Int\n Apple = 1", PrimitiveType.Int, "Apple"),
+    ("var Pear : Bool\n Pear = True", PrimitiveType.Bool, "Pear"),
+    ("var nectarine : String\n nectarine = \"The Best Fruit\"", PrimitiveType.String, "nectarine"),
 ]
 
 
@@ -158,22 +162,38 @@ class TypeTests(unittest.TestCase):
                 self.assertEqual(PrimitiveType.ERROR, inferred_types[1][expression])
                 self.assertTrue(log.includes_exactly(expected_category, 1, expression))
 
-    def test_variable_Correct(self):
-
+    def test_variable_Declaration(self):
         """
         This was stolen from the above examples to rapidly loop through variables and see if they match their types.
 
-        no_ws stands for no whitespace
+        This testcase uses a third field that is just the ID to allow for lookup of the
+        variable in the variable dictionary
         """
 
-        for expression, expected_type, no_ws in VARIABLE_TESTS:
+        for expression, expected_type, ID in VARDEC_TESTS:
             log, variables, inferred_types = do_semantic_analysis(expression, 'varDec')
             # if expression == '-37':
             #     print_debug_info(expression, inferred_types, log)
             with self.subTest(expression=expression, expected_type=expected_type):
-                self.assertEqual(expected_type, variables[no_ws])
+                self.assertEqual(expected_type, variables[ID])
 
-            pretty_types(inferred_types)
+
+
+    def test_variable_assignment(self):
+        """
+        This was stolen from the above examples to rapidly loop through variables and see if they match their types.
+
+        This testcase uses a third field that is just the ID to allow for lookup of the
+        variable in the variable dictionary
+        """
+
+        for expression, expected_type, ID in VARASSIGN_TESTS_valid:
+            log, variables, inferred_types = do_semantic_analysis(expression, 'varDec')
+            # if expression == '-37':
+            #     print_debug_info(expression, inferred_types, log)
+            with self.subTest(expression=expression, expected_type=expected_type):
+                self.assertEqual(expected_type, variables[ID])
+                self.assertEqual(0, log.total_entries())
 
     def test_print_primitive(self):
         log, variables, inferred_types = do_semantic_analysis("print 123", 'main')
