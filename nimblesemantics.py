@@ -176,7 +176,7 @@ class InferTypesAndCheckConstraints(NimbleListener):
         if ctx.expr().type != PrimitiveType.Bool:
             ctx.type = PrimitiveType.ERROR
             self.error_log.add(ctx, Category.CONDITION_NOT_BOOL,
-                               f"Expression {ctx.expr().text} not boolean")
+                               f"Expression {str(ctx.expr())} not boolean")
             return
 
     def exitIf(self, ctx: NimbleParser.IfContext):
@@ -184,7 +184,7 @@ class InferTypesAndCheckConstraints(NimbleListener):
         if ctx.expr().type != PrimitiveType.Bool:
             ctx.type = PrimitiveType.ERROR
             self.error_log.add(ctx, Category.CONDITION_NOT_BOOL,
-                               f"Expression {ctx.expr().text} not boolean")
+                               f"Expression {str(ctx.expr())} not boolean")
             return
 
     def exitPrint(self, ctx: NimbleParser.PrintContext):
@@ -192,7 +192,7 @@ class InferTypesAndCheckConstraints(NimbleListener):
         if ctx.expr().type == PrimitiveType.ERROR:
             ctx.type = PrimitiveType.ERROR
             self.error_log.add(ctx, Category.UNPRINTABLE_EXPRESSION,
-                               f"Can't print {ctx.op.text} ")
+                               f"Can't print {str(ctx.expr())} ")
 
     # --------------------------------------------------------
     # Expressions
