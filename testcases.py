@@ -92,9 +92,14 @@ INVALID_EXPRESSIONS = [
 
 VARIABLE_TESTS = [
 
-    ("var count : Int", PrimitiveType.Int, "count"),
-    ("var count : Int = 1 ", PrimitiveType.Int, "count"),
-    ("var count : Int = true ", PrimitiveType.ERROR, "count"),
+    ("var Apple : Int", PrimitiveType.Int, "Apple"),
+    ("var Apple : Int = 1 ", PrimitiveType.Int, "Apple"),
+    ("var Apple : Int = true ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Int = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Bool = true ", PrimitiveType.Bool, "Apple"),
+    ("var Apple : Bool = false ", PrimitiveType.Bool, "Apple"),
+    ("var Apple : Bool = \"Hello\" ", PrimitiveType.ERROR, "Apple"),
+    ("var Apple : Bool = 654 ", PrimitiveType.ERROR, "Apple"),
 
 
 ]

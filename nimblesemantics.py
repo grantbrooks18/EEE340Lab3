@@ -72,8 +72,6 @@ class InferTypesAndCheckConstraints(NimbleListener):
         vartype = vartype.text
 
         if vartype == "Int":
-
-
             if ctx.expr():
                 if ctx.expr().type == PrimitiveType.Int:
                     ctx.type = PrimitiveType.Int
@@ -84,8 +82,16 @@ class InferTypesAndCheckConstraints(NimbleListener):
                 ctx.type = PrimitiveType.Int
 
         elif vartype == "Bool":
-            # todo Test if the data is an bool
-            ctx.type = PrimitiveType.Bool
+
+            if ctx.expr():
+                if ctx.expr().type == PrimitiveType.Bool:
+                    ctx.type = PrimitiveType.Bool
+                else:
+                    ctx.type = PrimitiveType.ERROR
+
+            else:
+                ctx.type = PrimitiveType.Bool
+
 
         elif vartype == "String":
             # todo Test if the data is an string
@@ -99,7 +105,7 @@ class InferTypesAndCheckConstraints(NimbleListener):
 
         self.variables[newkey] = ctx.type
 
-        print(self.variables)
+        # print(self.variables)
 
     # --------------------------------------------------------
     # Statements
